@@ -2,7 +2,7 @@ const API_URL = import.meta.env.REACT_APP_API_URL;
 
 export const lobbyLoader = async () => {
   try {
-    const response = await fetch(`${API_URL}/codeblocks`);
+    const response = await fetch(`${API_URL}/api/codeblocks`);
     if (!response.ok) throw new Error('Failed to fetch code blocks');
     return response.json();
   } catch (error) {
@@ -14,7 +14,7 @@ export const lobbyLoader = async () => {
 export const codePageLoader = async ({ params }) => {
   try {
     console.log("IDd:", params.id);
-    const response = await fetch(`${API_URL}/codeblocks/${params.id}`);
+    const response = await fetch(`${API_URL}/api/codeblocks/${params.id}`);
     console.log("CodeBlock Data from lader:", response);
     if (!response.ok) throw new Error('Failed to fetch code block');
     return response.json();
