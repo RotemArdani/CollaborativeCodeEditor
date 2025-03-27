@@ -7,7 +7,7 @@ import MonacoEditor from '@monaco-editor/react';
 import Button from '../components/ui/Button';
 import '../styles/codeblock.css';
 
-const socket = io(import.meta.env.REACT_APP_SOCKET_URL);
+const socket = io(import.meta.env.VITE_SOCKET_URL);
 
 function CodeBlockPage() {
   const navigate = useNavigate();
