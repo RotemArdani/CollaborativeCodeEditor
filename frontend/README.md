@@ -5,6 +5,7 @@
 The frontend of this project is a collaborative code editing application built using React with Redux for state management and Socket.io for real-time synchronization. The UI is designed to provide an intuitive and seamless experience for mentors and students to interact with code in real-time.
 
 ## Technologies Used
+VITE
 
 React - Component-based UI framework
 
@@ -35,6 +36,7 @@ frontend/
 ## Installation & Setup
 
 To set up and run the frontend locally:  
+set your .env file, and then run those commands in the terminal:
 
 cd frontend  
 npm install    
