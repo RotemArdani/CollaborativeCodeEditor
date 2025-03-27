@@ -2,6 +2,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const lobbyLoader = async () => {
   try {
+    console.log(`Fetching from: ${API_URL}/api/codeblocks`);
     const response = await fetch(`${API_URL}/codeblocks`);
     if (!response.ok) throw new Error('Failed to fetch code blocks');
     return response.json();

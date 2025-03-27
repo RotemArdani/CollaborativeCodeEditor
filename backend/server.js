@@ -33,7 +33,7 @@ mongoose.connect(process.env.MONGO_DB_CONNECTION_STRING, {
   .catch((err) => console.log('MongoDB connection error:', err));
 
 const codeblockRoutes = require('./routes/codeblockRoutes');  
-app.use('/api/codeblocks', codeblockRoutes);  
+app.use('/api', codeblockRoutes);  
 
 io.on('connection', (socket) => {
     console.log('A user connected: ' + socket.id);
@@ -45,7 +45,7 @@ io.on('connection', (socket) => {
     });
   });
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
