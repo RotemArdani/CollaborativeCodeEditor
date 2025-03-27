@@ -65,7 +65,7 @@ npm / yarn
 git clone https://github.com/CollaborativeCodeEditor.git
 cd CollaborativeCodeEditor
 
-#### Don't forget to update environment variables according to your needs:  
+#### Update environment variables according to your needs:  
 For example:  
 for .env frontend:  
 VITE_SOCKET_URL=http://localhost:5000  
@@ -80,14 +80,12 @@ MONGO_DB_CONNECTION_STRING=your mongodb string
 
 cd backend  
 npm install    
-cp .env.example .env    
 npm run dev    
 
 #### Setup the Frontend:  
 
 cd frontend  
 npm install  
-cp .env.example .env  
 npm run dev  
 
 Don't forget to update environment variables according to your needs.  
