@@ -6,7 +6,7 @@ Hi (: this project is a real-time collaborative code editor designed for mentors
 
 ## Future Optimizations
 if had more free time I would:
-- Persist mentor role across sessions using a database or localStorage.
+- Persist mentor id across sessions using a database or localStorag (so mentor will be save even after reload/diconnect).
 
 - Enhance UI interactivity for a smoother user experience.
 
