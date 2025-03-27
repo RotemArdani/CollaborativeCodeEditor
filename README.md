@@ -17,6 +17,8 @@ if had more free time I would:
 ### Frontend:
 Netlify - deployment
 
+VITE
+
 React – Component-based UI development
 
 Redux – State management
@@ -62,6 +64,17 @@ npm / yarn
 
 git clone https://github.com/CollaborativeCodeEditor.git
 cd CollaborativeCodeEditor
+
+#### Don't forget to update environment variables according to your needs:  
+For example:  
+for .env frontend:  
+VITE_SOCKET_URL=http://localhost:5000  
+VITE_API_URL=http://localhost:5000    
+
+for .env backend:  
+PORT=5000  
+FRONTEND_URL=http://localhost:5173  
+MONGO_DB_CONNECTION_STRING=your mongodb string  
 
 #### Setup the Backend:  
 
