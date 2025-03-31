@@ -54,6 +54,7 @@ const socketController = (socket, io) => {
   });
 };
 
+// function to update room after changes
 function updateRoomState(io, roomId) {
   if (!rooms[roomId]) return;
   const students = Object.keys(rooms[roomId].usersInRoom).filter(id => rooms[roomId].usersInRoom[id] === 'student');
@@ -66,17 +67,18 @@ function updateRoomState(io, roomId) {
   });
 }
 
+// function to handel user disconnect from the app 
 function removeUserFromRoom(socketId, io) {
   let roomsToDelete = [];
 
-  for (const id in rooms) {
+  for (const id in rooms) { // if user is a student
       if (rooms[id].usersInRoom[socketId]) {
           delete rooms[id].usersInRoom[socketId];
           updateRoomState(io, id);
       }
   }
 
-  for (const id in rooms) {
+  for (const id in rooms) { // if user is a amentor
       if (rooms[id].mentorSocketId === socketId) {
           roomsToDelete.push(id);
       }
@@ -89,8 +91,6 @@ function removeUserFromRoom(socketId, io) {
   });
 }
 
-
-// module.exports = socketController;
 module.exports = { socketController, removeUserFromRoom };
 
 
