@@ -1,65 +1,86 @@
-let mentorSocketId = null;  
-let activeCodeblockId = null;  
-let usersInRoom = {};  
-let role = null;
+const rooms = {}; 
 
 const socketController = (socket, io) => {
   console.log('A user connected:', socket.id);
 
   socket.on('joinRoom', (codeblockId) => {
-    if (!mentorSocketId) { // first member will be the mentor
-      mentorSocketId = socket.id;
-      activeCodeblockId = codeblockId;
-      role = 'mentor';
-      io.emit('mentorAssigned', mentorSocketId);
-    } else if (mentorSocketId === socket.id) {  
-      activeCodeblockId = codeblockId;
-      role = 'mentor';
-      io.emit('mentorAssigned', mentorSocketId);
-    } else if (activeCodeblockId !== codeblockId) { // mentor is not in the room
+    if (!rooms[codeblockId]) {
+      rooms[codeblockId] = {
+        mentorSocketId: socket.id,
+        active: true,
+        usersInRoom: { [socket.id]: 'mentor' }
+      };
+      io.emit('mentorAssigned', socket.id);
+    } else if (rooms[codeblockId].mentorSocketId === socket.id) {
+      rooms[codeblockId].active = true;
+      rooms[codeblockId].usersInRoom[socket.id] = 'mentor';
+    } else if (!rooms[codeblockId].active) {
       socket.emit('roomNotAvailable', 'This room is not available. Try another one!');
-      return; 
+      return;
     } else {
-      role = 'student';
+      rooms[codeblockId].usersInRoom[socket.id] = 'student';
     }
 
     socket.join(codeblockId);
-    usersInRoom[socket.id] = role;
-
-    console.log(`User ${socket.id} (${role}) joined room ${codeblockId}`);
-    socket.emit('userRole', role); 
-    updateRoomState(io); 
+    console.log(`User ${socket.id} (${rooms[codeblockId].usersInRoom[socket.id]}) joined room ${codeblockId}`);
+    socket.emit('userRole', rooms[codeblockId].usersInRoom[socket.id]);
+    updateRoomState(io, codeblockId);
   });
 
-    socket.on('leaveRoom', () => {
-      console.log(`User ${socket.id} disconnected`);
-    
-      if (socket.id === mentorSocketId) { // mentor leave = clearing all the room
-        console.log("Mentor has disconnected, clearing room...");
-        activeCodeblockId = null;
-        usersInRoom = {}; 
-        io.emit('mentorLeft');  // return all students back to lobby
-        io.to(activeCodeblockId).emit('roomNotAvailable', 'Room is now closed because the mentor left.');
-      } else {
-        delete usersInRoom[socket.id]; // student leave = returns to lobby
+  socket.on('leaveRoom', (roomId) => {
+    if (!rooms[roomId]) return;
+    console.log(`User ${socket.id} left room ${roomId}`);
+
+    if (socket.id === rooms[roomId].mentorSocketId) {
+      console.log('Mentor has disconnected, marking room inactive...');
+      rooms[roomId].active = false;
+      io.to(roomId).emit('mentorLeft');
+      Object.keys(rooms[roomId].usersInRoom).forEach(userId => {
+        if (userId !== socket.id) {
+          io.to(userId).emit('roomNotAvailable', 'Room is now closed because the mentor left.');
+        }
+      });
+      rooms[roomId].usersInRoom = {};
+    } else {
+      delete rooms[roomId].usersInRoom[socket.id];
+    }
+    updateRoomState(io, roomId);
+  });
+
+  socket.on('disconnect', () => {
+    let roomId = null;
+    for (const id in rooms) {
+      if (rooms[id].usersInRoom[socket.id]) {
+        roomId = id;
+        break;
       }
-    
-      updateRoomState(io); 
-    });
+    }
+    if (!roomId) return;
+
+    console.log(`User ${socket.id} disconnected from ${roomId}`);
+    if (socket.id === rooms[roomId].mentorSocketId) {
+      console.log('Mentor has disconnected, clearing room...');
+      io.to(roomId).emit('mentorLeft');
+      delete rooms[roomId];
+    } else {
+      delete rooms[roomId].usersInRoom[socket.id];
+    }
+    updateRoomState(io, roomId);
+  });
 
   socket.on('codeUpdate', ({ roomId, newCode }) => {
-    if (roomId === activeCodeblockId) {
+    if (rooms[roomId] && rooms[roomId].active) {
       socket.to(roomId).emit('codeUpdate', newCode);
     }
   });
 
-  // function to update redux
-  function updateRoomState(io) {
-    const students = Object.keys(usersInRoom).filter(id => usersInRoom[id] === 'student');
-    io.to(activeCodeblockId).emit('updateRoomState', {
-      activeCodeblockId,
-      mentorSocketId,
-      isRoomAvailable: activeCodeblockId !== null,
+  function updateRoomState(io, roomId) {
+    if (!rooms[roomId]) return;
+    const students = Object.keys(rooms[roomId].usersInRoom).filter(id => rooms[roomId].usersInRoom[id] === 'student');
+    io.to(roomId).emit('updateRoomState', {
+      activeCodeblockId: roomId,
+      mentorSocketId: rooms[roomId].mentorSocketId,
+      isRoomAvailable: rooms[roomId].active,
       studentsCount: students.length,
       students
     });
@@ -67,6 +88,7 @@ const socketController = (socket, io) => {
 };
 
 module.exports = socketController;
+
 
 
   
