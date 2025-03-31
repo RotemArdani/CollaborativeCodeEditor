@@ -40,9 +40,9 @@ io.on('connection', (socket) => {
     
     socketController(socket, io);
   
-    socket.on('disconnect', () => {
-      console.log('User disconnected: ' + socket.id);
-    });
+    // socket.on('disconnect', () => {
+    //   console.log('User disconnected: ' + socket.id);
+    // });
   });
 
 const port = process.env.PORT;
