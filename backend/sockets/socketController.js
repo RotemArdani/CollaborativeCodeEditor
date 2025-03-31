@@ -73,22 +73,21 @@ const socketController = (socket, io) => {
       socket.to(roomId).emit('codeUpdate', newCode);
     }
   });
-
-  function updateRoomState(io, roomId) {
-    if (!rooms[roomId]) return;
-    const students = Object.keys(rooms[roomId].usersInRoom).filter(id => rooms[roomId].usersInRoom[id] === 'student');
-    io.to(roomId).emit('updateRoomState', {
-      activeCodeblockId: roomId,
-      mentorSocketId: rooms[roomId].mentorSocketId,
-      isRoomAvailable: rooms[roomId].active,
-      studentsCount: students.length,
-      students
-    });
-  }
 };
 
+function updateRoomState(io, roomId) {
+  if (!rooms[roomId]) return;
+  const students = Object.keys(rooms[roomId].usersInRoom).filter(id => rooms[roomId].usersInRoom[id] === 'student');
+  io.to(roomId).emit('updateRoomState', {
+    activeCodeblockId: roomId,
+    mentorSocketId: rooms[roomId].mentorSocketId,
+    isRoomAvailable: rooms[roomId].active,
+    studentsCount: students.length,
+    students
+  });
+}
+
 function removeUserFromRoom(socketId, io) {
-  console.log(`removeUserFromRoom was called for ${socketId}`);
   let roomId = null;
   for (const id in rooms) {
       if (rooms[id].usersInRoom[socketId]) {
