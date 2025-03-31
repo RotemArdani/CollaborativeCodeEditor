@@ -2,11 +2,22 @@
 
 ## Overview
 
-This project is a real-time collaborative code editor designed for mentors and students to interact seamlessly. The system allows a single mentor to oversee the code edits of multiple students, with strict role-based permissions and real-time synchronization.
+Hi (: this project is a real-time collaborative code editor designed for mentors and students to interact seamlessly. The system allows a single mentor to oversee the code edits of multiple students, with strict role-based permissions and real-time synchronization.
+
+## Future Optimizations
+if had more free time I would:
+- Persist mentor id across sessions using a database or localStorag (so mentor will be save even after reload/diconnect).
+
+- Enhance UI interactivity for a smoother user experience.
+
+- Auto-redirect users to an available room instead of the lobby.
 
 ## Technologies Used
 
 ### Frontend:
+Netlify - deployment
+
+VITE
 
 React – Component-based UI development
 
@@ -19,6 +30,7 @@ React Router – Client-side routing
 CSS Modules – Styling
 
 ### Backend:
+Render - deployment
 
 Node.js & Express.js – Web server & API
 
@@ -53,19 +65,30 @@ npm / yarn
 git clone https://github.com/CollaborativeCodeEditor.git
 cd CollaborativeCodeEditor
 
+#### Update environment variables according to your needs:  
+For example:  
+for .env frontend:  
+VITE_SOCKET_URL=http://localhost:5000  
+VITE_API_URL=http://localhost:5000    
+
+for .env backend:  
+PORT=5000  
+FRONTEND_URL=http://localhost:5173  
+MONGO_DB_CONNECTION_STRING=your mongodb string  
+
 #### Setup the Backend:  
 
 cd backend  
 npm install    
-cp .env.example .env    
 npm run dev    
 
 #### Setup the Frontend:  
 
 cd frontend  
 npm install  
-cp .env.example .env  
 npm run dev  
+
+Don't forget to update environment variables according to your needs.  
 
 ## Deployment
 
