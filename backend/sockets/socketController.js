@@ -88,6 +88,7 @@ const socketController = (socket, io) => {
 };
 
 function removeUserFromRoom(socketId, io) {
+  console.log(`removeUserFromRoom was called for ${socketId}`);
   let roomId = null;
   for (const id in rooms) {
       if (rooms[id].usersInRoom[socketId]) {
