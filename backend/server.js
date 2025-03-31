@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');              
 const socketIo = require('socket.io')
 const { Server } = require("socket.io");     
-const socketController = require('./sockets/socketController');  
+const { socketController, removeUserFromRoom } = require('./sockets/socketController');
+// const removeUserFromRoom  = require('./sockets/socketController');  
 require('dotenv').config();                
 
 const app = express();
@@ -40,9 +41,10 @@ io.on('connection', (socket) => {
     
     socketController(socket, io);
   
-    // socket.on('disconnect', () => {
-    //   console.log('User disconnected: ' + socket.id);
-    // });
+    socket.on('disconnect', () => {
+      console.log('User disconnected: ' + socket.id);
+      removeUserFromRoom(socket.id, io); 
+    });
   });
 
 const port = process.env.PORT;

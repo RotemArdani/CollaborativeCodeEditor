@@ -13,7 +13,6 @@ function CodeBlockPage() {
   const navigate = useNavigate();
   const codeBlock = useLoaderData();
   const dispatch = useDispatch();
-  console.log("CodeBlock Data from page:", codeBlock);
   const [code, setCode] = useState(codeBlock.code);
   const [usersCount, setUsersCount] = useState(0);
   const solution = codeBlock.solution;
