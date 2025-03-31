@@ -96,16 +96,26 @@ function removeUserFromRoom(socketId, io) {
           break;
       }
   }
-  if (!roomId) return;
-
-  console.log(`User ${socketId} disconnected from ${roomId}`);
-  if (socketId === rooms[roomId].mentorSocketId) {
+  if (!roomId){ //
+    for (const id in rooms) {
+      if (rooms[id].mentorSocketId === socketId) {
+          roomId = id;
+          break;
+      }
+    }  
+    console.log('Mentor has disconnected, clearing room...');
+    io.to(roomId).emit('mentorLeft');
+    delete rooms[roomId];
+  } else {
+    if (socketId === rooms[roomId].mentorSocketId) {
       console.log('Mentor has disconnected, clearing room...');
       io.to(roomId).emit('mentorLeft');
       delete rooms[roomId];
-  } else {
+    } else {
       delete rooms[roomId].usersInRoom[socketId];
+    }
   }
+
   updateRoomState(io, roomId);
 }
 
