@@ -46,29 +46,27 @@ const socketController = (socket, io) => {
     }
     updateRoomState(io, roomId);
   });
-  
 
-  function removeUserFromRoom(socketId, io){
-    let roomId = null;
-    for (const id in rooms) {
-      if (rooms[id].usersInRoom[socketId]) {
-        roomId = id;
-        break;
-      }
-    }
-    if (!roomId) return;
+  // socket.on('disconnect', () => {
+  //   let roomId = null;
+  //   for (const id in rooms) {
+  //     if (rooms[id].usersInRoom[socket.id]) {
+  //       roomId = id;
+  //       break;
+  //     }
+  //   }
+  //   if (!roomId) return;
 
-    console.log(`User ${socketId} disconnected from ${roomId}`);
-    if (socketId === rooms[roomId].mentorSocketId) {
-      console.log('Mentor has disconnected, clearing room...');
-      io.to(roomId).emit('mentorLeft');
-      delete rooms[roomId];
-    } else {
-      delete rooms[roomId].usersInRoom[socketId];
-    }
-    updateRoomState(io, roomId);
-  }
-
+  //   console.log(`User ${socket.id} disconnected from ${roomId}`);
+  //   if (socket.id === rooms[roomId].mentorSocketId) {
+  //     console.log('Mentor has disconnected, clearing room...');
+  //     io.to(roomId).emit('mentorLeft');
+  //     delete rooms[roomId];
+  //   } else {
+  //     delete rooms[roomId].usersInRoom[socket.id];
+  //   }
+  //   updateRoomState(io, roomId);
+  // });
 
   socket.on('codeUpdate', ({ roomId, newCode }) => {
     if (rooms[roomId] && rooms[roomId].active) {
@@ -89,10 +87,29 @@ const socketController = (socket, io) => {
   }
 };
 
-module.exports = {
-  socketController,
-  removeUserFromRoom
-};
+function removeUserFromRoom(socketId, io) {
+  let roomId = null;
+  for (const id in rooms) {
+      if (rooms[id].usersInRoom[socketId]) {
+          roomId = id;
+          break;
+      }
+  }
+  if (!roomId) return;
+
+  console.log(`User ${socketId} disconnected from ${roomId}`);
+  if (socketId === rooms[roomId].mentorSocketId) {
+      console.log('Mentor has disconnected, clearing room...');
+      io.to(roomId).emit('mentorLeft');
+      delete rooms[roomId];
+  } else {
+      delete rooms[roomId].usersInRoom[socketId];
+  }
+  updateRoomState(io, roomId);
+}
+
+// module.exports = socketController;
+module.exports = { socketController, removeUserFromRoom };
 
 
 

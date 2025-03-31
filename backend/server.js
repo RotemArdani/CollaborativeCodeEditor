@@ -4,7 +4,6 @@ const cors = require('cors');
 const socketIo = require('socket.io')
 const { Server } = require("socket.io");     
 const { socketController, removeUserFromRoom } = require('./sockets/socketController');
-// const removeUserFromRoom  = require('./sockets/socketController');  
 require('dotenv').config();                
 
 const app = express();
@@ -46,6 +45,8 @@ io.on('connection', (socket) => {
       removeUserFromRoom(socket.id, io); 
     });
   });
+
+
 
 const port = process.env.PORT;
 server.listen(port, () => {
