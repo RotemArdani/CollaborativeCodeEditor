@@ -47,27 +47,6 @@ const socketController = (socket, io) => {
     updateRoomState(io, roomId);
   });
 
-  // socket.on('disconnect', () => {
-  //   let roomId = null;
-  //   for (const id in rooms) {
-  //     if (rooms[id].usersInRoom[socket.id]) {
-  //       roomId = id;
-  //       break;
-  //     }
-  //   }
-  //   if (!roomId) return;
-
-  //   console.log(`User ${socket.id} disconnected from ${roomId}`);
-  //   if (socket.id === rooms[roomId].mentorSocketId) {
-  //     console.log('Mentor has disconnected, clearing room...');
-  //     io.to(roomId).emit('mentorLeft');
-  //     delete rooms[roomId];
-  //   } else {
-  //     delete rooms[roomId].usersInRoom[socket.id];
-  //   }
-  //   updateRoomState(io, roomId);
-  // });
-
   socket.on('codeUpdate', ({ roomId, newCode }) => {
     if (rooms[roomId] && rooms[roomId].active) {
       socket.to(roomId).emit('codeUpdate', newCode);
@@ -88,35 +67,28 @@ function updateRoomState(io, roomId) {
 }
 
 function removeUserFromRoom(socketId, io) {
-  let roomId = null;
+  let roomsToDelete = [];
+
   for (const id in rooms) {
       if (rooms[id].usersInRoom[socketId]) {
-          roomId = id;
-          break;
+          delete rooms[id].usersInRoom[socketId];
+          updateRoomState(io, id);
       }
-  }
-  if (!roomId){ //
-    for (const id in rooms) {
-      if (rooms[id].mentorSocketId === socketId) {
-          roomId = id;
-          break;
-      }
-    }  
-    console.log('Mentor has disconnected, clearing room...');
-    io.to(roomId).emit('mentorLeft');
-    delete rooms[roomId];
-  } else {
-    if (socketId === rooms[roomId].mentorSocketId) {
-      console.log('Mentor has disconnected, clearing room...');
-      io.to(roomId).emit('mentorLeft');
-      delete rooms[roomId];
-    } else {
-      delete rooms[roomId].usersInRoom[socketId];
-    }
   }
 
-  updateRoomState(io, roomId);
+  for (const id in rooms) {
+      if (rooms[id].mentorSocketId === socketId) {
+          roomsToDelete.push(id);
+      }
+  }
+
+  roomsToDelete.forEach(roomId => {
+      console.log(`Mentor ${socketId} has disconnected, clearing room ${roomId}...`);
+      io.to(roomId).emit('mentorLeft');
+      delete rooms[roomId];
+  });
 }
+
 
 // module.exports = socketController;
 module.exports = { socketController, removeUserFromRoom };
