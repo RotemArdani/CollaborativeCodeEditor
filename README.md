@@ -5,12 +5,10 @@
 Hi (: this project is a real-time collaborative code editor designed for mentors and students to interact seamlessly. The system allows a single mentor to oversee the code edits of multiple students, with strict role-based permissions and real-time synchronization.
 
 ## Future Optimizations
-if had more free time I would:
-- Persist mentor id across sessions using a database or localStorag (so mentor will be save even after reload/diconnect).
 
 - Enhance UI interactivity for a smoother user experience.
 
-- Auto-redirect users to an available room instead of the lobby.
+- Chat between mentor and students.
 
 ## Technologies Used
 
